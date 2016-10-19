@@ -1,9 +1,39 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.contrib.auth.models import User 
+from django.contrib.auth.models import User
+from django.template.defaultfilters import date
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 class Twit(models.Model):
     text = models.CharField(max_length=100)
-    createdBy = models.ForeignKey(User, on_delete=models.CASCADE)
-    createdOn = models.DateTimeField(editable=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_on = models.DateTimeField(editable=False, auto_now_add=True)
+    
+    def __str__(self):
+        return 'Twit: "{0}" created by {1} on {2}'.format(
+            self.text, self.created_by, self.created_on)
+
+    # Returns nice looking date of creation. For shorter
+    # periods returns hour, day of week,
+    # for longer - year and month etc.
+    def get_date(self):
+        result_format = str()
+        now_timezone_aware = timezone.make_aware(datetime.now())
+        time_passed = now_timezone_aware - self.created_on
+        
+        if time_passed > timedelta(weeks=1):
+
+            if time_passed > timedelta(years=1):
+                result_format += 'o, '
+            result_format += 'j b'
+            
+        else:
+            if time_passed > timedelta(days=1):
+                result_format += 'l '
+            result_format += 'G:i'
+
+        return date(self.created_on, result_format)
+        
+        
