@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.template.defaultfilters import date
 from datetime import datetime, timedelta
 from django.utils import timezone
+
 
 class Twit(models.Model):
     text = models.CharField(max_length=100)
@@ -13,7 +15,7 @@ class Twit(models.Model):
     
     def __str__(self):
         return 'Twit: "{0}" created by {1} on {2}'.format(
-            self.text, self.created_by, self.created_on)
+            self.text, self.created_by, self.get_date())
 
     # Returns nice looking date of creation. For shorter
     # periods returns hour, day of week,
@@ -24,7 +26,6 @@ class Twit(models.Model):
         time_passed = now_timezone_aware - self.created_on
         
         if time_passed > timedelta(weeks=1):
-
             if time_passed > timedelta(years=1):
                 result_format += 'o, '
             result_format += 'j b'
@@ -35,5 +36,23 @@ class Twit(models.Model):
             result_format += 'G:i'
 
         return date(self.created_on, result_format)
-        
-        
+
+#  It can be done with django-friends.
+class Friend(models.Model):
+    user = models.ForeignKey(User, related_name='user')
+    friend = models.ForeignKey(User, related_name='friend')
+
+    @staticmethod
+    def can_make_friends_with(current_user):
+        return FriendsManager(current_user)
+    
+    def save(self, *args, **kwargs):
+        try:
+            Friend.objects.get(user=self.user, friend=self.friend)
+        except Friend.DoesNotExist:
+            super(Friend, self).save()
+            rev = Friend(user=self.friend, friend=self.user)
+            super(Friend, rev).save()
+
+    def __str__(self):
+        return "User {0} is a friend of {1}.".format(self.user.username, self.friend.username)

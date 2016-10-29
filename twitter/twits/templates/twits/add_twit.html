@@ -1,0 +1,5 @@
+<form action="{% url 'twits:add_twit' %}" method="post">
+  {% csrf_token %}
+  {{ add_twit_form.as_p }}
+  <button type="submit" class="save btn btn-default">Post!</button>
+</form>

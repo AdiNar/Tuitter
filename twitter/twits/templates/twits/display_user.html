@@ -1,0 +1,45 @@
+{% extends 'twitter/base_theme.html' %}
+
+{% load bootstrap3 %}
+
+{% block content %}
+
+  {% bootstrap_label "<p> This is a page of user {{ user.name }}, id: {{user.id }} </p>" %}
+
+  <p> User friends:</p>
+
+  {% if friends %}
+    <ul>
+      {% for friend in friends %}
+	<li> {{ friend.friend }} </li>
+      {% endfor %}
+    </ul>
+
+{% else %}
+  <p>User has no friends.</p>
+{% endif %}
+
+{% if user.id == logged_user_id %}
+  {% include 'twits/add_friend.html' %}
+{% endif %}
+
+
+<p> User twits: </p>
+
+{% if user_twits %}
+  <ul>
+    {% for twit in user_twits %}
+      <li> {{ twit }} </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>User has not posted any twits.</p>
+{% endif %}
+
+{{ user.id }} w requescie jest {{ logged_user_id }}
+
+{% if user.id == logged_user_id %}
+  {% include 'twits/add_twit.html' %}
+{% endif %}
+
+{% endblock %}
