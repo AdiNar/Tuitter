@@ -1,0 +1,9 @@
+{% load tags %}
+
+{% if user != friend %}
+  {% if is_following %}
+    {% link_to "/remove_friend/{}" "Usun ze znajomych" friend.id %}
+  {% else %}
+    {% link_to "/add_friend/{}" "Dodaj do znajomych" friend.id %}
+  {% endif %}
+{% endif %}

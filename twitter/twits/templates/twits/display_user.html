@@ -2,35 +2,20 @@
 
 {% load bootstrap3 %}
 {% load friendshiptags %}
+{% load tags %}
 
 {% block content %}
 
-  {% bootstrap_label "<p> This is a page of user {{ user.name }}, id: {{user.id }} </p>" %}
+  <p> Oglądasz stronę użytkownika {{ user.username }} </p>
 
-  <p> User friends:</p>
-
-  {% if friends %}
-    {% following request.user %}
-  {% else %}
-    <p>User has no friends.</p> 
-  {% endif %}
-
-{% if user.id == logged_user_id %}
+  {% display_manage_friend logged_user user %}
+  
+  {% include 'twitter/users_list.html' with users=friends title="Znajomi użytkownika: " no_users="Użytkownik nie ma jeszcze znajomych." %}
+  
+{% if user.id == logged_user.id %}
   {% include 'twits/add_friend.html' %}
 {% endif %}
 
-<p> User twits: </p>
-
-{% if user_twits %}
-  <ul>
-    {% for twit in user_twits %}
-      <li> {{ twit }} </li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>User has not posted any twits.</p>
-{% endif %}
-
-{{ user.id }} w requescie jest {{ logged_user_id }}
+{% include 'twitter/twits_list.html' with twits=user_twits no_twits="Użytkownik nie postował żadnych twitów." %}
 
 {% endblock %}

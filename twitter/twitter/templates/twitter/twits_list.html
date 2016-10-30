@@ -1,5 +1,9 @@
-<ul> {{ title }}
-  {% for t in twits %}
-    <li> {% include 'twitter/twit.html' with twit=t %} </li>
-  {% endfor %}
-</ul>
+{% if twits %}
+  <ul> {{ title }}
+    {% for t in twits %}
+      <li> {% include 'twitter/twit.html' with twit=t %} </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p> {{ no_twits }}
+{% endif %}

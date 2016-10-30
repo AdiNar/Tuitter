@@ -25,4 +25,6 @@ urlpatterns = [
     url(r'^register_user/', views.register_user, name='register_user'),
     url(r'^logout/', views.logout, name='logout'),
     url(r'^users/', views.users, name='users'),
+    url(r'^add_friend/(?P<user_id>[0-9]+)/$', views.add_friend, name='add_friend'),
+    url(r'^remove_friend/(?P<user_id>[0-9]+)/$', views.remove_friend, name='remove_friend'),
 ]

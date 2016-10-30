@@ -21,7 +21,7 @@ def display_user(request, user_id=-1, error_context={}):
     user = User.objects.get(id=user_id)
     friends = Follow.objects.following(user=user)
     twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:10]
-    logged_user_id = request.user.id
+    logged_user = request.user
     add_twit_form = TwitForm()
     add_friend_form = FriendForm(request.user)
 
@@ -29,7 +29,7 @@ def display_user(request, user_id=-1, error_context={}):
         'user_twits': twits,
         'user': user,
         'friends': friends,
-        'logged_user_id': logged_user_id,
+        'logged_user': logged_user,
         'add_twit_form': add_twit_form,
         'add_friend_form': add_friend_form,
     }#.update(error_context)

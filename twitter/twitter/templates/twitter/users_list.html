@@ -1,8 +1,10 @@
+{% load user_tags %}
+
 
 {% if users %}
   <ul> {{ title }}
     {% for user in users %}
-      <li> <a href="{% url 'twits:display_user' user.id %}"> {{ user.username }}</a> </li>
+      <li> {% link_to_user user %} </li>
     {% endfor %}
   </ul>
 {% else %}

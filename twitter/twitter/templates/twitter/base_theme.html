@@ -27,12 +27,12 @@
   <body>
     {% include 'twitter/user_menu.html' %}
     {% if user.is_anonymous %} 
-      <p> This content is visible only for logged user.</p>
+      <p> Treść dostępna wyłącznie dla zalogowanych.</p>
       {% block login %} {% endblock %}
-     {% else %}
-       {% block content %} {% endblock %}
-       {% block add_twit %} {% endblock %}
-     {% endif %}
+    {% else %}
+      {% block content %} {% endblock %}
+      {% block add_twit %} {% endblock %}
+    {% endif %}
 
   </body>
 </html>

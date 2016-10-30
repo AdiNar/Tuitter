@@ -1,8 +1,8 @@
 {% extends 'twitter/base_theme.html' %}
 
 {% block add_twit %}
-
-  {% if user.id == logged_user_id %}
+  
+  {% if user.id == logged_user.id %}
     {% include 'twits/add_twit.html' %}
   {% endif %}
 

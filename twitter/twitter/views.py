@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from friendship.models import Follow
+from twits.views import display_user
+from django.views.decorators.cache import cache_control
+from twits.models import Twit
+
+RESULT_SIZE = 20
 
 def index(request):
     context = {}
@@ -18,7 +23,17 @@ def index(request):
     return render(request, 'twitter/index.html', context)
 
 def get_twits_for(user):
-    return []
+    """ Returns twits created by user and friends.
+    Twits are sorted by id - result is the same as sorting with created_on.
+    """
+
+    if user.is_anonymous:
+        return Twit.objects.all().order_by('-created_on')[:RESULT_SIZE]
+    else:
+        following = Follow.objects.following(user)
+        # Show twits from current user too.
+        following.append(user)
+        return Twit.objects.filter(created_by__in=following).order_by('-created_on')[:RESULT_SIZE]
 
 def log_in_user(request):
     if request.method == 'POST':
@@ -66,12 +81,16 @@ def user_authenticate(request, username, password):
 def display_user_page(request):
     return redirect('twits:display_user', user_id=request.user.id)
 
+@cache_control(no_cache=True, must_revalidate=True)
 def logout(user):
     auth.logout(user)
     return redirect('index')
 
 def users(request):
-    friends = Follow.objects.following(request.user)
+    if request.user.is_anonymous:
+        friends = []
+    else:
+        friends = Follow.objects.following(request.user)
     rest = User.objects.exclude(id__in=map((lambda x: x.id), friends))
                                 
     context = {
@@ -80,3 +99,17 @@ def users(request):
     }
     
     return render(request, 'twitter/users.html', context)
+
+def add_friend(request, user_id):
+    to_follow = User.objects.get(id=user_id)
+
+    Follow.objects.add_follower(request.user, to_follow)
+
+    return display_user(request, user_id)
+
+def remove_friend(request, user_id):
+    to_follow = User.objects.get(id=user_id)
+
+    Follow.objects.remove_follower(request.user, to_follow)
+
+    return display_user(request, user_id)

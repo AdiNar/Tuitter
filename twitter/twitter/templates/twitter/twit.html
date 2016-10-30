@@ -1,1 +1,7 @@
-{{ twit }}
+{% load tags %}
+
+<div class="twit">
+  <p> Autor: {% link_to_user twit.created_by %}, {% get_twit_date twit %} </p>
+
+  {{ twit.text }}
+</div>
