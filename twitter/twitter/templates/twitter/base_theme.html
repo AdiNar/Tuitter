@@ -1,0 +1,38 @@
+{% load bootstrap3 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{% bootstrap_messages %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Twitter</title>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link href="{{STATIC_URL|default:"/static/"}}css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css" />
+    <style type="text/css">
+      body {
+      padding-top: 60px;
+      padding-bottom: 40px;
+      }
+      {% block css %}{% endblock %}
+    </style>
+    <link href="{{STATIC_URL|default:"/static/"}}css/bootstrap-responsive.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+    {% include 'twitter/user_menu.html' %}
+    {% if user.is_anonymous %} 
+      <p> This content is visible only for logged user.</p>
+      {% block login %} {% endblock %}
+     {% else %}
+       {% block content %} {% endblock %}
+       {% block add_twit %} {% endblock %}
+     {% endif %}
+
+  </body>
+</html>

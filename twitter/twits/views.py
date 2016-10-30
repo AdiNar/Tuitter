@@ -8,11 +8,15 @@ from .forms import TwitForm, FriendForm
 def index(request):
     return HttpResponse("Hello")
 
-def display_user(request, user_id, error_context={}):
+def display_user(request, user_id=-1, error_context={}):
     """Display page for given user, contains forms to add friends and twits.
 
     error_context should contain form with errors if any occur.
-    """ 
+    """
+    # No user specified, show page for current
+    if user_id == -1:
+        user_id = request.user.id
+        
     user = User.objects.get(id=user_id)
     friends = Friend.objects.filter(user=user_id)
     twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:10]

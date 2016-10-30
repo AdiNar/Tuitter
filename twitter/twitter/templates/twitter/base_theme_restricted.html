@@ -1,0 +1,7 @@
+{% extends 'twitter/base_theme.html' %}
+{% if user.is_authenticated %}
+  <p> This content is user-restricted.</p>
+{% else %}
+  {% block content %}
+  {% endblock %}
+{% endif %}

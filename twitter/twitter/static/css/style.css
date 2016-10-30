@@ -1,0 +1,16 @@
+
+
+.center_box {
+    vertical-align: middle;
+    text-align: center;
+    background: #44556;
+}
+
+.login_box, .divider_box {
+    display: inline-block;
+    padding: 50px;
+}
+
+.divider_box {
+    vertical-align: middle;
+}

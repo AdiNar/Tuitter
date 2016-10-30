@@ -1,0 +1,24 @@
+{% extends 'twitter/base_theme.html' %}
+
+{% load static %}
+
+{% block login %}
+
+<div class="center_box">
+  <div class="login_box">
+    {% block log_in_form %}
+    {% endblock %}
+  </div>
+
+  <div class="divider_box">
+    <p> Or </p>
+  </div>
+  <div class="login_box">
+    {% block register_form %}
+    {% endblock %}
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %} {% endblock %}

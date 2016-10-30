@@ -1,4 +1,4 @@
-{% extends 'twitter/base_theme.html' %}
+{% extends 'twitter/base_theme_twittable.html' %}
 
 {% load bootstrap3 %}
 
@@ -37,9 +37,5 @@
 {% endif %}
 
 {{ user.id }} w requescie jest {{ logged_user_id }}
-
-{% if user.id == logged_user_id %}
-  {% include 'twits/add_twit.html' %}
-{% endif %}
 
 {% endblock %}

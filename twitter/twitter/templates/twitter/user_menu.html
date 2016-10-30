@@ -1,0 +1,27 @@
+{% load bootstrap3 %}
+
+<header class="navbar navbar-fixed-top navbar-inverse">
+  <div class="container">
+    <nav>
+      {% if user.is_anonymous %}
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a href="/">Zaloguj</a></li>
+	</ul>
+      {% else %}
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a href="/logout">Wyloguj</a></li>
+	</ul>
+	<ul class="nav navbar-nav navbar-right">
+	  <li><a href="{% url 'twits:display_user' %}">Strona użytkownika</a></li>
+	</ul>
+      {% endif %}
+
+      <ul class="nav navbar-nav navbar-right">
+	<li><a href="/users">Użytkownicy</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+	<li><a href="/">Strona główna</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

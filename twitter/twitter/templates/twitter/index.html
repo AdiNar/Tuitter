@@ -1,0 +1,28 @@
+{% extends 'twitter/base_login_register.html' %}
+
+{% load bootstrap3 %}
+
+{% block log_in_form %}
+  <form action="{% url 'log_in_user' %}" method="post">
+    {% csrf_token %}
+    {% bootstrap_form log_in_form layout='inline' %}
+    {% buttons %}
+      <input type="submit" value="Zaloguj" />
+    {% endbuttons %}
+  </form>
+{% endblock %}
+
+{% block register_form %}
+  <form action="{% url 'register_user' %}" method="post">
+    {% csrf_token %}
+    {% bootstrap_form register_form layout='inline' %}
+    {% buttons %}
+    <input type="submit" value="Zarejestruj" />
+    {% endbuttons %}
+  </form>
+{% endblock %}
+
+{% block content %}
+  {% include 'twitter/twits_list.html' with title='Friends Twits' twits=friends_twits %}
+{% endblock %}
+
