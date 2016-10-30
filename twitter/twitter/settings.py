@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'bootstrap3',
     'twitter',
     'twits',
+    'friendship',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

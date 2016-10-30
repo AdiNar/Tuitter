@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^log_in_user/', views.log_in_user, name='log_in_user'),
     url(r'^register_user/', views.register_user, name='register_user'),
-    url(r'^logout/', views.logout, name='logout'), 
+    url(r'^logout/', views.logout, name='logout'),
+    url(r'^users/', views.users, name='users'),
 ]

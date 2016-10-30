@@ -1,6 +1,7 @@
 {% extends 'twitter/base_theme_twittable.html' %}
 
 {% load bootstrap3 %}
+{% load friendshiptags %}
 
 {% block content %}
 
@@ -9,20 +10,14 @@
   <p> User friends:</p>
 
   {% if friends %}
-    <ul>
-      {% for friend in friends %}
-	<li> {{ friend.friend }} </li>
-      {% endfor %}
-    </ul>
-
-{% else %}
-  <p>User has no friends.</p>
-{% endif %}
+    {% following request.user %}
+  {% else %}
+    <p>User has no friends.</p> 
+  {% endif %}
 
 {% if user.id == logged_user_id %}
   {% include 'twits/add_friend.html' %}
 {% endif %}
-
 
 <p> User twits: </p>
 

@@ -1,0 +1,6 @@
+{% extends 'twitter/base_theme.html' %}
+
+{% block content %}
+  {% include 'twitter/users_list.html' with users=friends title="Znajomi" no_users="Użytkownik nie ma jeszcze znajomych" %}
+  {% include 'twitter/users_list.html' with users=rest title="Pozostali użytkownicy" %}
+{% endblock %}

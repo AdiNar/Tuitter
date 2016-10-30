@@ -1,9 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from .models import Twit, Friend
+from .models import Twit
 from django.contrib import auth
 from .forms import TwitForm, FriendForm
+from friendship.models import Follow
 
 def index(request):
     return HttpResponse("Hello")
@@ -18,7 +19,7 @@ def display_user(request, user_id=-1, error_context={}):
         user_id = request.user.id
         
     user = User.objects.get(id=user_id)
-    friends = Friend.objects.filter(user=user_id)
+    friends = Follow.objects.following(user=user)
     twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:10]
     logged_user_id = request.user.id
     add_twit_form = TwitForm()
@@ -54,12 +55,8 @@ def add_friend(request):
     form = FriendForm(current_user, data=request.POST)
     
     if form.is_valid():
-        print("Valid")
-        from_form = form.save(commit=False)
-        from_form.user = current_user
-        
-        print(from_form)
-        from_form.save()
+        to_follow = form.save(commit=False)
+        Follow.objects.add_follower(request.user, to_follow.user) 
      
     else:
         print("Invalid")

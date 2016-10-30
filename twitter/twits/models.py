@@ -37,22 +37,7 @@ class Twit(models.Model):
 
         return date(self.created_on, result_format)
 
-#  It can be done with django-friends.
-class Friend(models.Model):
-    user = models.ForeignKey(User, related_name='user')
-    friend = models.ForeignKey(User, related_name='friend')
-
-    @staticmethod
-    def can_make_friends_with(current_user):
-        return FriendsManager(current_user)
-    
-    def save(self, *args, **kwargs):
-        try:
-            Friend.objects.get(user=self.user, friend=self.friend)
-        except Friend.DoesNotExist:
-            super(Friend, self).save()
-            rev = Friend(user=self.friend, friend=self.user)
-            super(Friend, rev).save()
-
-    def __str__(self):
-        return "User {0} is a friend of {1}.".format(self.user.username, self.friend.username)
+class BoxedUser(models.Model):
+    """ Used only to display ModelChoiceField with users
+    """
+    user = models.ForeignKey(User)

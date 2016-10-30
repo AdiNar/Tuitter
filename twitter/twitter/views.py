@@ -4,7 +4,7 @@ from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
-from django.core.urlresolvers import reverse
+from friendship.models import Follow
 
 def index(request):
     context = {}
@@ -16,6 +16,9 @@ def index(request):
     else:
         context['friends_twits'] = get_twits_for(request.user)
     return render(request, 'twitter/index.html', context)
+
+def get_twits_for(user):
+    return []
 
 def log_in_user(request):
     if request.method == 'POST':
@@ -67,3 +70,13 @@ def logout(user):
     auth.logout(user)
     return redirect('index')
 
+def users(request):
+    friends = Follow.objects.following(request.user)
+    rest = User.objects.exclude(id__in=map((lambda x: x.id), friends))
+                                
+    context = {
+        'friends': friends,
+        'rest': rest,
+    }
+    
+    return render(request, 'twitter/users.html', context)
