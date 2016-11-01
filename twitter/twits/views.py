@@ -5,6 +5,7 @@ from .models import Twit
 from django.contrib import auth
 from .forms import TwitForm
 from friendship.models import Follow
+from twitter.views import display_user
 
 def add_twit(request):
 

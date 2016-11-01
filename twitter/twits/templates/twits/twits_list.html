@@ -1,7 +1,7 @@
 {% if twits %}
   <ul> {{ title }}
     {% for t in twits %}
-      <li> {% include 'twitter/twit.html' with twit=t %} </li>
+      <li> {% include 'twits/twit.html' with twit=t %} </li>
     {% endfor %}
   </ul>
 {% else %}

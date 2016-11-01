@@ -109,7 +109,7 @@ def user_authenticate(request, username, password):
         return True
     
 def display_user_page(request):
-    return redirect('twitter:display_user', user_id=request.user.id)
+    return redirect('display_user', user_id=request.user.id)
 
 @cache_control(no_cache=True, must_revalidate=True)
 def logout(user):
