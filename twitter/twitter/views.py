@@ -130,7 +130,11 @@ def users(request):
     
     return render(request, 'twitter/users.html', context)
 
-def add_friend(request, user_id):
+def add_friend(request, user_id=-1):
+    """ Add friend from form (POST) or by link.
+    When using form user_id is not provided, -1 means no id.
+    
+    """
 
     if request.method == 'POST':
         current_user = auth.get_user(request)

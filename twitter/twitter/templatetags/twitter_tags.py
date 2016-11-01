@@ -19,7 +19,8 @@ def link_to_user(user, name=None):
     if name is None:
         name = user.username
 
-    return link_to("/twits/user/{0}".format(user.id), name)
+    return link_to("/user/{0}".format(user.id), name)
+
 
 @register.simple_tag
 def get_twit_date(twit):
