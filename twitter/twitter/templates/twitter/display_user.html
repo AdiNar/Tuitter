@@ -13,7 +13,7 @@
   {% include 'twitter/users_list.html' with users=friends title="Znajomi użytkownika: " no_users="Użytkownik nie ma jeszcze znajomych." %}
   
 {% if user.id == logged_user.id %}
-  {% include 'twits/add_friend.html' %}
+  {% include 'twitter/add_friend.html' %}
 {% endif %}
 
 {% include 'twitter/twits_list.html' with twits=user_twits no_twits="Użytkownik nie postował żadnych twitów." %}

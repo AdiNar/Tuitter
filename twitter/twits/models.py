@@ -36,8 +36,3 @@ class Twit(models.Model):
             result_format += 'G:i'
 
         return date(self.created_on, result_format)
-
-class BoxedUser(models.Model):
-    """ Used only to display ModelChoiceField with users
-    """
-    user = models.ForeignKey(User)

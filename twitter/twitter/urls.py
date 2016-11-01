@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.contrib.auth.views import password_change
+from django.views.generic import TemplateView
 from . import views
 
 urlpatterns = [
@@ -26,5 +28,10 @@ urlpatterns = [
     url(r'^logout/', views.logout, name='logout'),
     url(r'^users/', views.users, name='users'),
     url(r'^add_friend/(?P<user_id>[0-9]+)/$', views.add_friend, name='add_friend'),
+    url(r'^add_friend/$', views.add_friend, name='add_friend'),
     url(r'^remove_friend/(?P<user_id>[0-9]+)/$', views.remove_friend, name='remove_friend'),
+    url(r'^passchange/$', password_change, {'template_name': 'twitter/password_change.html'}),
+    url(r'^password_change_done/$', TemplateView.as_view(template_name='twitter/password_change_done.html'), name='password_change_done'),
+    url(r'^user/(?P<user_id>[0-9]+)/$', views.display_user, name='display_user'),
+    url(r'^user/$', views.display_user, name='display_user'),
 ]

@@ -1,13 +1,13 @@
-from .forms import LogInForm, RegisterForm
+from .forms import LogInForm, RegisterForm, FriendForm
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
 from friendship.models import Follow
-from twits.views import display_user
 from django.views.decorators.cache import cache_control
 from twits.models import Twit
+from twits.forms import TwitForm
 
 RESULT_SIZE = 20
 
@@ -21,6 +21,36 @@ def index(request):
     else:
         context['friends_twits'] = get_twits_for(request.user)
     return render(request, 'twitter/index.html', context)
+
+def display_user(request, user_id=-1, error_context={}):
+    """Display page for given user, contains forms to add friends and twits.
+
+    error_context should contain form with errors if any occur.
+    """
+    # No user specified, show page for current
+    if user_id == -1:
+        user_id = request.user.id
+        
+    user = User.objects.get(id=user_id)
+    friends = Follow.objects.following(user=user)
+    twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:10]
+    logged_user = request.user
+    add_twit_form = TwitForm()
+    add_friend_form = FriendForm(request.user)
+
+    context = {
+        'user_twits': twits,
+        'user': user,
+        'friends': friends,
+        'logged_user': logged_user,
+        'add_twit_form': add_twit_form,
+        'add_friend_form': add_friend_form,
+    }
+
+    print(context)
+    
+    return render(request, 'twitter/display_user.html', context)
+
 
 def get_twits_for(user):
     """ Returns twits created by user and friends.
@@ -79,7 +109,7 @@ def user_authenticate(request, username, password):
         return True
     
 def display_user_page(request):
-    return redirect('twits:display_user', user_id=request.user.id)
+    return redirect('twitter:display_user', user_id=request.user.id)
 
 @cache_control(no_cache=True, must_revalidate=True)
 def logout(user):
@@ -101,11 +131,21 @@ def users(request):
     return render(request, 'twitter/users.html', context)
 
 def add_friend(request, user_id):
-    to_follow = User.objects.get(id=user_id)
 
-    Follow.objects.add_follower(request.user, to_follow)
+    if request.method == 'POST':
+        current_user = auth.get_user(request)
+        form = FriendForm(current_user, data=request.POST)
 
-    return display_user(request, user_id)
+        if form.is_valid():
+            to_follow = form.save(commit=False)
+            Follow.objects.add_follower(request.user, to_follow.user) 
+            return display_user(request, request.user.id, {'add_friend_form':form})
+        else:
+            raise Exception("Add friend form invalid, this should not happen")
+    else:
+        to_follow = User.objects.get(id=user_id)
+        Follow.objects.add_follower(request.user, to_follow)
+        return display_user(request, user_id)
 
 def remove_friend(request, user_id):
     to_follow = User.objects.get(id=user_id)
@@ -113,3 +153,4 @@ def remove_friend(request, user_id):
     Follow.objects.remove_follower(request.user, to_follow)
 
     return display_user(request, user_id)
+
