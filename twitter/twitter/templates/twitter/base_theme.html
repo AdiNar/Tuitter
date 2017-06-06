@@ -11,9 +11,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-
     <link href="{{STATIC_URL|default:"/static/"}}css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css" />
+    <script src="{{ STATIC_URL }}js/twitter.js"></script>
     <style type="text/css">
       body {
       padding-top: 60px;
@@ -25,14 +25,27 @@
   </head>
 
   <body>
-    {% include 'twitter/user_menu.html' %}
-    {% if user.is_anonymous %} 
-      <p> Treść dostępna wyłącznie dla zalogowanych.</p>
-      {% block login %} {% endblock %}
-    {% else %}
-      {% block content %} {% endblock %}
-      {% block add_twit %} {% endblock %}
-    {% endif %}
-
+    <script>
+        window.document.onload = function (e) {
+            window.document.body.style.color = "blue";
+        }
+    </script>
+    <div class='container'>
+      {% include 'twitter/user_menu.html' %}
+      {% if user.is_anonymous %} 
+	<p> Treść dostępna wyłącznie dla zalogowanych.</p>
+	{% block login %} {% endblock %}
+      {% else %}
+	<div class='row'>
+	  <div class='col-md-6'>
+	    {% block content %} {% endblock %}
+	  </div>
+	  <div class='col-md-6 text-center'>
+	    {% block add_twit %} {% endblock %}
+        <button type="button" id="btt" onclick="onButton()">Change Content</button>
+	  </div>
+	</div>
+      {% endif %}
+    </div>
   </body>
 </html>

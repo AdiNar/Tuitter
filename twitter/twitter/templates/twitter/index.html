@@ -7,7 +7,7 @@
     {% csrf_token %}
     {% bootstrap_form log_in_form layout='inline' %}
     {% buttons %}
-      <input type="submit" value="Zaloguj" />
+      <input class="btn btn-lg" type="submit" value="Zaloguj" />
     {% endbuttons %}
   </form>
 {% endblock %}
@@ -17,7 +17,7 @@
     {% csrf_token %}
     {% bootstrap_form register_form layout='inline' %}
     {% buttons %}
-    <input type="submit" value="Zarejestruj" />
+    <input class="btn btn-lg" type="submit" value="Zarejestruj" />
     {% endbuttons %}
   </form>
 {% endblock %}

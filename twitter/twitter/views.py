@@ -9,6 +9,7 @@ from django.views.decorators.cache import cache_control
 from twits.models import Twit
 from twits.forms import TwitForm
 
+# Maximum number of displayed twits
 RESULT_SIZE = 20
 
 def index(request):
@@ -27,13 +28,13 @@ def display_user(request, user_id=-1, error_context={}):
 
     error_context should contain form with errors if any occur.
     """
-    # No user specified, show page for current
+    # No user specified, show page for current.
     if user_id == -1:
         user_id = request.user.id
         
     user = User.objects.get(id=user_id)
     friends = Follow.objects.following(user=user)
-    twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:10]
+    twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:RESULT_SIZE]
     logged_user = request.user
     add_twit_form = TwitForm()
     add_friend_form = FriendForm(request.user)
@@ -53,7 +54,7 @@ def display_user(request, user_id=-1, error_context={}):
 
 
 def get_twits_for(user):
-    """ Returns twits created by user and friends.
+    """ Returns twits created by user and his friends.
     Twits are sorted by id - result is the same as sorting with created_on.
     """
 
@@ -79,8 +80,10 @@ def log_in_user(request):
     else:
         raise Exception("log_in_user should receive post!")
 
-# Register user, if succeeded log in and redirect to user page
+
 def register_user(request):
+    """ Register user, if succeeded log in and redirect to user page.
+    """
     if request.method == 'POST':
         form = RegisterForm(request.POST)
 
@@ -135,7 +138,6 @@ def add_friend(request, user_id=-1):
     When using form user_id is not provided, -1 means no id.
     
     """
-
     if request.method == 'POST':
         current_user = auth.get_user(request)
         form = FriendForm(current_user, data=request.POST)

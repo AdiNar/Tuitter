@@ -1,5 +1,6 @@
 {% if twits %}
-  <ul> {{ title }}
+  {{ title }}
+  <ul class='list-unstyled' id='twits'>
     {% for t in twits %}
       <li> {% include 'twits/twit.html' with twit=t %} </li>
     {% endfor %}

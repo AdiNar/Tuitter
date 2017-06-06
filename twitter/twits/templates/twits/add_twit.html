@@ -1,5 +1,10 @@
-<form action="{% url 'twits:add_twit' %}" method="post">
+<span class="glyphicons glyphicons-pen"></span> 
+<form action="{% url 'twits:add_twit' %}"
+      method="post"
+      onsubmit="submit_twit()">
   {% csrf_token %}
   {{ add_twit_form.as_p }}
-  <button type="submit" class="save btn btn-default">Post!</button>
+  <button type="submit" class="save btn btn-lg">Post!</button>
 </form>
+
+<script src="static/js/add_twit.js"></script>

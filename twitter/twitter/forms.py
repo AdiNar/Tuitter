@@ -3,7 +3,7 @@ from .models import BoxedUser
 from django import forms
 from django.contrib.auth.models import User
 
-# Email activation is not supported.
+# Email activation is not supported, log in after register.
 class LogInForm(AuthenticationForm):
     def confirm_login_allowed(self, user):
         pass

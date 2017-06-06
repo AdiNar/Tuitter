@@ -2,3 +2,5 @@
 *.elc
 *.sqlite3
 *~
+tw/
+.idea/
