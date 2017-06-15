@@ -21,9 +21,10 @@ def add_twit(request):
         twit = Twit(text=text, created_by=request.user)
         twit.save()
 
-        return render(request, 'twits/twit.html', {'twit': twit})
+        return render(request, 'twits/twit.html', {'twit': twit, 'display_refresh': True})
     else:
         return twits_list(request)
+
 
 def twits_list(request):
     twits = get_twits_for(request.user)

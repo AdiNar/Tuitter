@@ -1,13 +1,13 @@
 # coding=utf-8
-from chartit import DataPool, Chart, PivotDataPool, PivotChart
-from django.db.models import F, Q
+from django.db.models import F, Min, DurationField
 from django.db.models.aggregates import Count
+from django.db.models.expressions import Subquery, OuterRef, Case, When, ExpressionWrapper
 from django.db.models.functions import Length
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import LogInForm, RegisterForm, FriendForm
-from django.shortcuts import render, redirect, render_to_response
+from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -43,7 +43,7 @@ def display_user(request, user_id=-1, error_context={}):
         
     user = User.objects.get(id=user_id)
     friends = Follow.objects.following(user=user)
-    twits = Twit.objects.filter(created_by=user).order_by('-created_on')[:RESULT_SIZE]
+    twits = get_twits_for(user=user)
     logged_user = request.user
     add_twit_form = TwitForm()
     add_friend_form = FriendForm(request.user)
@@ -71,7 +71,26 @@ def get_twits_for(user):
         following = Follow.objects.following(user)
         # Show twits from current user too.
         following.append(user)
-        return Twit.objects.filter(created_by__in=following).order_by('-created_on')[:RESULT_SIZE]
+        twits = Twit.objects.filter(created_by__in=following)\
+            .order_by('-created_on')[:RESULT_SIZE]
+
+        # subquery to take twits created after given.
+        query = Twit.objects.filter(created_on__gt=OuterRef('created_on'))
+
+        # Adds time in seconds showing how many seconds passed since last twit.
+        return twits\
+            .annotate(next=
+                Min(
+                    Subquery(query.values('created_on'))
+                )
+            )\
+            .annotate(time_to_next_twit=
+                Case(
+                    When(next__isnull=True, then=None),
+                    default=ExpressionWrapper(F('next') - F('created_on'),
+                                              output_field=DurationField())
+                )
+            )
 
 
 def log_in_user(request):

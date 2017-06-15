@@ -10,6 +10,7 @@ def set_text_length(apps, schema_editor):
     Twit = apps.get_model("twits", "Twit")
     Twit.objects.update(text_length=Length('text'))
 
+
 class Migration(migrations.Migration):
     """Custom migration adding text-length field to model.
     """

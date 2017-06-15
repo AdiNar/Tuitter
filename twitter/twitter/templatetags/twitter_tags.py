@@ -1,3 +1,4 @@
+import datetime
 from django import template
 from django.template import defaulttags
 from django.utils.safestring import mark_safe
@@ -6,6 +7,7 @@ from django.template.loader import render_to_string
 
 register = template.Library()
 
+
 @register.simple_tag
 def link_to(link, name, arg=""):
     """Make a href to link with arg with given name.
@@ -13,6 +15,7 @@ def link_to(link, name, arg=""):
     """
     link = link.format(arg)
     return mark_safe('<a href="{0}">{1}</a>'.format(link, name))
+
 
 @register.simple_tag
 def link_to_user(user, name=None):
@@ -26,6 +29,7 @@ def link_to_user(user, name=None):
 def get_twit_date(twit):
     return twit.get_date()
 
+
 @register.simple_tag
 def display_manage_friend(user, to_follow):
     template = 'twitter/manage_friend.html'
@@ -37,3 +41,15 @@ def display_manage_friend(user, to_follow):
     }
 
     return render_to_string(template, context)
+
+
+@register.filter
+def duration(td):
+    if not td:
+        return None
+
+    total_seconds = int(td.total_seconds())
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+
+    return '{} hours {} min {} sec'.format(hours, minutes, total_seconds % 60)

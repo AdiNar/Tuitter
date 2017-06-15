@@ -1,7 +1,12 @@
 {% load tags %}
+{% load twitter_tags %}
 
 <div class="twit">
-  <p> Autor: {% link_to_user twit.created_by %}, {% get_twit_date twit %} </p>
-
+  <p> Autor: {% link_to_user twit.created_by %}, {% get_twit_date twit %}
+  {% if twit.time_to_next_twit %}
+      Odstęp do następnego twita: {{ twit.time_to_next_twit|duration }}
+  {%  elif display_refresh %}
+    Odśwież aby zobaczyć czas do następnego twita
+  {%  endif %}</p>
   {{ twit.text }}
 </div>

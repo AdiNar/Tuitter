@@ -13,13 +13,14 @@ class Twit(models.Model):
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_on = models.DateTimeField(editable=False, auto_now_add=True)
     text_length = models.IntegerField(default=0)
-    
+
     def __str__(self):
         return 'Twit: "{0}" created by {1} on {2}'.format(
             self.text, self.created_by, self.get_date())
 
     def save(self, *args, **kwargs):
         self.text_length = len(self.text)
+
         super(Twit, self).save(*args, **kwargs)
 
     # Returns nice looking date of creation. For shorter
