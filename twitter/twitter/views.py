@@ -1,13 +1,22 @@
+# coding=utf-8
+from chartit import DataPool, Chart, PivotDataPool, PivotChart
+from django.db.models import F, Q
+from django.db.models.aggregates import Count
+from django.db.models.functions import Length
+from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+
 from .forms import LogInForm, RegisterForm, FriendForm
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, render_to_response
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import logout
-from friendship.models import Follow
+from friendship.models import Follow, Friend
 from django.views.decorators.cache import cache_control
 from twits.models import Twit
 from twits.forms import TwitForm
+from templatetags.twitter_tags import link_to_user
 
 # Maximum number of displayed twits
 RESULT_SIZE = 20
@@ -47,8 +56,6 @@ def display_user(request, user_id=-1, error_context={}):
         'add_twit_form': add_twit_form,
         'add_friend_form': add_friend_form,
     }
-
-    print(context)
     
     return render(request, 'twitter/display_user.html', context)
 
@@ -65,6 +72,7 @@ def get_twits_for(user):
         # Show twits from current user too.
         following.append(user)
         return Twit.objects.filter(created_by__in=following).order_by('-created_on')[:RESULT_SIZE]
+
 
 def log_in_user(request):
     if request.method == 'POST':
@@ -98,7 +106,8 @@ def register_user(request):
             return render(request, 'twitter/index.html', context)
     else:
         raise Exception("register_user should reveive post!")
-    
+
+
 # Should always return true since form takes care of data correctness.
 def user_authenticate(request, username, password):
     user = auth.authenticate(username=username, password=password)
@@ -110,14 +119,17 @@ def user_authenticate(request, username, password):
         print("Auth")
         auth.login(request, user)
         return True
-    
+
+
 def display_user_page(request):
     return redirect('display_user', user_id=request.user.id)
+
 
 @cache_control(no_cache=True, must_revalidate=True)
 def logout(user):
     auth.logout(user)
     return redirect('index')
+
 
 def users(request):
     if request.user.is_anonymous:
@@ -133,25 +145,21 @@ def users(request):
     
     return render(request, 'twitter/users.html', context)
 
+
+@csrf_exempt
 def add_friend(request, user_id=-1):
     """ Add friend from form (POST) or by link.
     When using form user_id is not provided, -1 means no id.
-    
     """
     if request.method == 'POST':
-        current_user = auth.get_user(request)
-        form = FriendForm(current_user, data=request.POST)
-
-        if form.is_valid():
-            to_follow = form.save(commit=False)
-            Follow.objects.add_follower(request.user, to_follow.user) 
-            return display_user(request, request.user.id, {'add_friend_form':form})
-        else:
-            raise Exception("Add friend form invalid, this should not happen")
+        to_follow = User.objects.get(id=user_id)
+        Follow.objects.add_follower(request.user, to_follow)
+        return HttpResponse(link_to_user(to_follow) + "<br>")
     else:
         to_follow = User.objects.get(id=user_id)
         Follow.objects.add_follower(request.user, to_follow)
         return display_user(request, user_id)
+
 
 def remove_friend(request, user_id):
     to_follow = User.objects.get(id=user_id)
@@ -160,3 +168,34 @@ def remove_friend(request, user_id):
 
     return display_user(request, user_id)
 
+
+def get_length_distribution(user):
+    objects = Twit.objects\
+        .filter(created_by__in=Follow.objects.following(user))\
+        .annotate(twit_len=Length('text'), user=F('created_by__username'))\
+        .values('user', 'twit_len')\
+        .annotate(count=Count('twit_len'))\
+        .order_by('user', 'twit_len')
+
+    return objects
+
+
+def get_friends_friends(user):
+    followers = Follow.objects\
+        .filter(follower=user).values('followee')
+
+    return Follow.objects\
+        .filter(follower__in=followers)\
+        .exclude(followee__in=followers)
+
+
+
+
+
+def statistics(request, user_id=-1):
+    context = {}
+
+    context['length_dist'] = get_length_distribution(request.user)
+    context['friends_friends'] = get_friends_friends(request.user)
+
+    return render(request, 'twitter/stats.html', context)

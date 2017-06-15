@@ -1,18 +1,15 @@
 $(document).ready(function() {
-    $('#twit-post-form').submit(function(e) {
+    $('#friend-add-form').submit(function(e) {
         e.preventDefault();
         $.ajax({
-            url: "/twits/add_twit/",
+            url: "/add_friend/" + $('#id_user').val() + "/",
             type: "POST",
             success: function(data) {
-                $('#twits').prepend(data);
+                $('#users-list').append(data);
             },
             error: function(json) {
                 alert("error");
             },
-            data: {
-                text:$('#id_text').val()
-            }
         });
     });
 });
