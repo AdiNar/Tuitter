@@ -1,0 +1,21 @@
+{% extends 'twitter/base_theme.html' %}
+{%  load twitter_tags %}
+
+{% block raw_content %}
+    <div class="col-md-6">
+        {% for t in length_dist %}
+            Użytkownik {{ t.user }} napisał
+            {{ t.count }} twitów o długości {{ t.twit_len }}<br>
+        {% endfor %}
+    </div>
+
+    <div class="col-md-6">
+        Osoby które są obserwowane przez Twoich znajomych:
+        {% for friend in friends_friends %}
+            <br>{% link_to_user friend.followee %}
+        {% endfor %}
+        <br>
+    </div>
+
+
+{% endblock %}
