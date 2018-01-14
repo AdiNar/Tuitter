@@ -16,7 +16,7 @@ from friendship.models import Follow, Friend
 from django.views.decorators.cache import cache_control
 from twits.models import Twit
 from twits.forms import TwitForm
-from templatetags.twitter_tags import link_to_user
+from twitter.templatetags.twitter_tags import link_to_user
 
 # Maximum number of displayed twits
 RESULT_SIZE = 20
